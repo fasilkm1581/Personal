@@ -636,39 +636,48 @@ document.addEventListener('mouseleave',()=>r.classList.remove('on'));
 document.querySelectorAll('a,.chip,.btn').forEach(e=>{e.addEventListener('mouseenter',()=>r.classList.add('big'));e.addEventListener('mouseleave',()=>r.classList.remove('big'))});
 (function f(){cx+=(x-cx)*.2;cy+=(y-cy)*.2;r.style.transform='translate('+cx+'px,'+cy+'px)';requestAnimationFrame(f)})()})();
 
-// sound effects (Web Audio, synthesized: no audio files)
+// sound effects (Web Audio, synthesized: soft, low-level UI sounds, no audio files)
 (function(){const AC=window.AudioContext||window.webkitAudioContext;const btn=document.getElementById('snd'),lab=document.getElementById('sndl');if(!btn)return;
 if(!AC){btn.style.display='none';return}
-let ctx=null,master=null,on=true,noise=null,unlocked=false;
+let ctx=null,out=null,on=true,noise=null,unlocked=false;
 try{if(localStorage.getItem('fz-sound')==='off')on=false}catch(e){}
 function paint(){btn.setAttribute('aria-pressed',on?'true':'false');lab.textContent=on?(unlocked?'Sound on':'Tap for sound'):'Sound off'}
-function init(){if(ctx)return;try{ctx=new AC();master=ctx.createGain();master.gain.value=.5;master.connect(ctx.destination);
- const n=ctx.sampleRate*.6,buf=ctx.createBuffer(1,n,ctx.sampleRate),d=buf.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;noise=buf}catch(e){ctx=null}}
+function init(){if(ctx)return;try{ctx=new AC();
+ const comp=ctx.createDynamicsCompressor();comp.threshold.value=-24;comp.ratio.value=4;
+ const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=5000;
+ out=ctx.createGain();out.gain.value=.55;out.connect(lp);lp.connect(comp);comp.connect(ctx.destination);
+ const n=ctx.sampleRate,buf=ctx.createBuffer(1,n,ctx.sampleRate),d=buf.getChannelData(0);let b=0;
+ for(let i=0;i<n;i++){const w=Math.random()*2-1;b=(b+.04*w)/1.04;d[i]=b*8}  // brown noise: warm, not hissy
+ noise=buf}catch(e){ctx=null}}
 function unlock(){init();if(ctx&&ctx.state!=='running')ctx.resume().then(()=>{unlocked=true;paint()}).catch(()=>{});else if(ctx){unlocked=true;paint()}}
 ['pointerdown','touchend','keydown','click'].forEach(ev=>addEventListener(ev,unlock,{passive:true}));
 function ok(){return on&&ctx&&ctx.state==='running'}
-function tone(freq,dur,vol,type,when){const t=ctx.currentTime+(when||0),o=ctx.createOscillator(),g=ctx.createGain();o.type=type||'sine';o.frequency.setValueAtTime(freq,t);
- g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+.02)}
-function tick(f){if(!ok())return;tone(f,.07,.06,'triangle')}
-function whoosh(v){if(!ok())return;const t=ctx.currentTime,s=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();s.buffer=noise;f.type='bandpass';f.Q.value=.9;
- f.frequency.setValueAtTime(300,t);f.frequency.exponentialRampToValueAtTime(2200,t+.35);
- g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(Math.min(.16,.04+v*.03),t+.12);g.gain.exponentialRampToValueAtTime(.0001,t+.45);
- s.connect(f);f.connect(g);g.connect(master);s.start(t);s.stop(t+.5)}
-function chime(){if(!ok())return;tone(659.25,.5,.07,'sine');tone(987.77,.7,.05,'sine',.09)}
-function blip(){if(!ok())return;tone(1500,.05,.025,'sine')}
+// soft tactile tick: a few ms of filtered noise, like a fine dial
+function tick(){if(!ok())return;const t=ctx.currentTime,s=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();
+ s.buffer=noise;s.playbackRate.value=1.4;f.type='bandpass';f.frequency.value=1500;f.Q.value=.7;
+ g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.16,t+.003);g.gain.exponentialRampToValueAtTime(.0001,t+.03);
+ s.connect(f);f.connect(g);g.connect(out);s.start(t,Math.random()*.5);s.stop(t+.05)}
+// gentle air swell for quick scrolling
+function swell(v){if(!ok())return;const t=ctx.currentTime,s=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();
+ s.buffer=noise;f.type='lowpass';f.Q.value=.5;f.frequency.setValueAtTime(250,t);f.frequency.exponentialRampToValueAtTime(900,t+.4);
+ g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(Math.min(.2,.07+v*.02),t+.18);g.gain.exponentialRampToValueAtTime(.0001,t+.6);
+ s.connect(f);f.connect(g);g.connect(out);s.start(t,Math.random()*.3);s.stop(t+.65)}
+// soft low pulse when a new section is reached
+function pulse(){if(!ok())return;const t=ctx.currentTime,o=ctx.createOscillator(),g=ctx.createGain(),f=ctx.createBiquadFilter();
+ o.type='sine';o.frequency.setValueAtTime(210,t);o.frequency.exponentialRampToValueAtTime(130,t+.25);f.type='lowpass';f.frequency.value=700;
+ g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.22,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.32);
+ o.connect(f);f.connect(g);g.connect(out);o.start(t);o.stop(t+.35)}
 let wasLocked=false;btn.addEventListener('pointerdown',()=>{wasLocked=!unlocked});
-btn.addEventListener('click',()=>{if(on&&(wasLocked||!unlocked)){wasLocked=false;unlock();setTimeout(chime,200);return}on=!on;try{localStorage.setItem('fz-sound',on?'on':'off')}catch(e){}unlock();paint();if(on)setTimeout(chime,60)});
+btn.addEventListener('click',()=>{if(on&&(wasLocked||!unlocked)){wasLocked=false;unlock();setTimeout(pulse,200);return}on=!on;try{localStorage.setItem('fz-sound',on?'on':'off')}catch(e){}unlock();paint();if(on)setTimeout(pulse,60)});
 paint();
 // scroll sounds
 let lastY=scrollY,lastT=performance.now(),acc=0,lastW=0,cur='';const secs=[...document.querySelectorAll('section')];
 addEventListener('scroll',()=>{const y=scrollY,t=performance.now(),dy=Math.abs(y-lastY),dt=Math.max(1,t-lastT);lastY=y;lastT=t;
  if(!ok())return;const v=dy/dt;acc+=dy;
- if(acc>110){acc=0;const m=document.documentElement.scrollHeight-innerHeight;tick(620+(m>0?y/m:0)*900)}
- if(v>2&&t-lastW>500){lastW=t;whoosh(v)}
+ if(acc>240){acc=0;tick()}
+ if(v>2.2&&t-lastW>900){lastW=t;swell(v)}
  let c=secs[0]?secs[0].id:'';secs.forEach(s=>{if(s.getBoundingClientRect().top<innerHeight*.4)c=s.id});
- if(c!==cur){if(cur)chime();cur=c}},{passive:true});
-// hover blips
-let lb=0;document.querySelectorAll('.chip,.btn,.card,.stat,.cert,.step,.nav a').forEach(e=>e.addEventListener('mouseenter',()=>{const t=performance.now();if(t-lb>90){lb=t;blip()}}));
+ if(c!==cur){if(cur)pulse();cur=c}},{passive:true});
 })();
 </script>
 </body>
