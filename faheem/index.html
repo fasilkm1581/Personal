@@ -531,7 +531,7 @@ h2{font-weight:700;letter-spacing:-.03em;text-transform:none;line-height:1.08;fo
   <div class="eyebrow rv">Chapter II · Experience</div>
   <h2 class="rv">Where I've worked, and <span class="grad">what I handle.</span></h2>
   <div class="tl" id="tl"><div class="fill" id="fill"></div>
-    <div class="job glass rv"><em>SEP 2024 — PRESENT · FULL-TIME · ON-SITE</em><h3>Senior Accountant · Emirates Gold</h3><p>Dubai, United Arab Emirates. 2 years 2 months.</p>
+    <div class="job glass rv"><em>SEP 2024 — PRESENT · FULL-TIME · ON-SITE</em><h3>Senior Accountant · Emirates Gold</h3><p>Dubai, United Arab Emirates. <span id="eg-dur">Current role.</span></p>
       <ul class="bul">
         <li>Handle customer sales and purchases of gold and silver, ensuring trade accuracy, compliance and risk control.</li>
         <li>Manage price fixing for clients in line with LBMA rates, market exposure and hedging requirements.</li>
@@ -625,6 +625,8 @@ const CONFIG={email:'',whatsapp:'971547605474',linkedin:''}; // whatsapp: digits
  document.getElementById('nocontact').hidden=any})();
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 $('#yr').textContent=new Date().getFullYear();
+(function(){const n=new Date(),m=(n.getFullYear()-2024)*12+n.getMonth()-8;if(m<1)return;const y=Math.floor(m/12),r=m%12,t=[];
+ if(y)t.push(y+(y>1?' years':' year'));if(r)t.push(r+(r>1?' months':' month'));$('#eg-dur').textContent=t.join(' ')+'.'})();
 const words=['Gold and Silver Trading','Price Fixing','Metal Accounting','VAT and Corporate Tax','Financial Statements'];
 $('#mq').innerHTML=[0,1].map(()=>`<span>${words.join('</span><span>')}</span>`).join('');
 // typing
