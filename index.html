@@ -537,10 +537,10 @@ body.scene-on .glass{background-color:rgba(5,6,7,.16)!important;backdrop-filter:
   <div class="about-wrap">
     <p class="rv l">I'm Fasil KM, an Operations Manager at Emirates Gold FZCO in Dubai, where I've worked across gold refining and precious metals trading since December 2018. I run operations from metal intake and assay through refining, casting and dispatch, and I coordinate the trading, accounting, logistics and production teams so every lot is tracked accurately from receipt to delivery. On the trading side, I handle platforms including StoneX, Gold Standard, Vintage and Lunaro, covering spot fixing, LBMA price fixing, hedging and risk control. With a background in auditing, Neo Gold accounting and office operations, I focus on process optimization, strong team leadership and keeping compliance records in order. I work in English and Hindi, and I enjoy connecting with people in refining, bullion trading and operations.</p>
     <div class="stats">
-      <div class="stat glass rv r"><b data-to="7">0</b><span>Years at Emirates Gold</span></div>
-      <div class="stat glass rv r" style="transition-delay:.1s"><b data-exact="1" data-to="30">0</b><span>Years of Emirates Gold history</span></div>
-      <div class="stat glass rv r" style="transition-delay:.2s"><b data-to="23">0</b><span>Skills listed</span></div>
-      <div class="stat glass rv r" style="transition-delay:.3s"><b data-to="4">0</b><span>Languages</span></div>
+      <div class="stat glass rv r"><b data-to="7">7+</b><span>Years at Emirates Gold</span></div>
+      <div class="stat glass rv r" style="transition-delay:.1s"><b data-exact="1" data-to="30">30</b><span>Years of Emirates Gold history</span></div>
+      <div class="stat glass rv r" style="transition-delay:.2s"><b data-to="23">23+</b><span>Skills listed</span></div>
+      <div class="stat glass rv r" style="transition-delay:.3s"><b data-to="4">4+</b><span>Languages</span></div>
     </div>
   </div>
 </section>
@@ -553,9 +553,9 @@ body.scene-on .glass{background-color:rgba(5,6,7,.16)!important;backdrop-filter:
   <div class="about-wrap">
     <p class="rv l">Emirates Gold refines, assays, smelts, trades and mints precious metals for local and international markets. Its bullion bars are refined up to 999.9 fineness, and it also makes custom bars and coins, separates precious stones from old jewellery and supplies corporate gifts.</p>
     <div class="co">
-      <div class="stat glass rv r"><b data-exact="1" data-to="30">0</b><span>Investment bars and coins</span><p>Investment-grade bars and coins for people who want to protect their future by investing in precious metals. Bullion bars are refined up to 999.9 fineness.</p></div>
-      <div class="stat glass rv r" style="transition-delay:.1s"><b data-exact="1" data-to="15">0</b><span>Cast bars and granules</span><p>Bars cast from melted fine metal and grains made from scrap metal. They give traders, jewellers and refiners metal in easy-to-handle forms.</p></div>
-      <div class="stat glass rv r" style="transition-delay:.2s"><b data-exact="1" data-to="6">0</b><span>Build your own bars and coins</span><p>Bars, coins and medals made to your own design at the Emirates Gold mint, for brands, special occasions and corporate gifting.</p></div>
+      <div class="stat glass rv r"><b data-exact="1" data-to="30">30</b><span>Investment bars and coins</span><p>Investment-grade bars and coins for people who want to protect their future by investing in precious metals. Bullion bars are refined up to 999.9 fineness.</p></div>
+      <div class="stat glass rv r" style="transition-delay:.1s"><b data-exact="1" data-to="15">15</b><span>Cast bars and granules</span><p>Bars cast from melted fine metal and grains made from scrap metal. They give traders, jewellers and refiners metal in easy-to-handle forms.</p></div>
+      <div class="stat glass rv r" style="transition-delay:.2s"><b data-exact="1" data-to="6">6</b><span>Build your own bars and coins</span><p>Bars, coins and medals made to your own design at the Emirates Gold mint, for brands, special occasions and corporate gifting.</p></div>
     </div>
   </div>
   <div class="chips rv"><span class="chip">Refining</span><span class="chip">Fire assay and spectrometry</span><span class="chip">Smelting</span><span class="chip">Bullion trading</span><span class="chip">Minting coins and bars</span><span class="chip">Custom designs</span><span class="chip">Jewellery stone separation</span><span class="chip">Corporate gifting</span></div>
@@ -721,7 +721,10 @@ $$('.chips').forEach(c=>{const ch=[...c.children];ch.forEach(x=>x.style.opacity=
 // timeline dots
 $$('.job').forEach(j=>inView(j,()=>j.classList.add('in'),{amount:.4}));
 // counters
-$$('[data-to]').forEach(b=>{const to=+b.dataset.to;inView(b,()=>{animate(0,to,{duration:1.6,ease:'easeOut',onUpdate:v=>{b.textContent=Math.round(v)+(b.dataset.exact?'':'+')}})},{amount:.6})});
+$$('[data-to]').forEach(b=>{const to=+b.dataset.to,sfx=b.dataset.exact?'':'+';let done=0;
+ const run=()=>{if(done)return;done=1;const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/1600),v=to*(1-Math.pow(1-k,3));b.textContent=Math.round(v)+sfx;if(k<1)requestAnimationFrame(f)})(t0)};
+ if(!('IntersectionObserver' in window))return;
+ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){io.disconnect();run()}}),{threshold:.3});io.observe(b)});
 // spring hover, tilt and magnetic buttons
 $$('.tilt').forEach(el=>{el.addEventListener('mousemove',e=>{const r=el.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
  el.style.setProperty('--mx',x+'px');el.style.setProperty('--my',y+'px');
