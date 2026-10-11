@@ -1269,9 +1269,11 @@ boxes.forEach(b=>{
  if(!touch){b.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse'){show(b);holdAutoScroll()}});
   b.addEventListener('pointermove',e=>{if(e.pointerType==='mouse')holdAutoScroll()});
   b.addEventListener('pointerleave',()=>{if(cur===b)hide()})}
- else b.addEventListener('click',()=>{cur===b?hide():show(b)})});
-if(touch)document.addEventListener('click',e=>{if(!e.target.closest('#process .step,#skills .card'))hide()});
-addEventListener('scroll',()=>{if(cur&&Math.abs(scrollY-sy0)>40)hide()},{passive:true});
+ });
+if(touch){let tk=0;const pick=()=>{tk=0;const vh=innerHeight,vw=innerWidth;let best=null,bd=1e9;boxes.forEach(b=>{const r=b.getBoundingClientRect();if(r.top<vh*.5&&r.bottom>vh*.5){const d=Math.abs(r.left+r.width/2-vw/2);if(d<bd){bd=d;best=b}}});
+  if(best){if(cur!==best)show(best)}else if(cur)hide()};
+ const sched=()=>{if(!tk)tk=requestAnimationFrame(pick)};addEventListener('scroll',sched,{passive:true});addEventListener('touchmove',sched,{passive:true});setInterval(pick,600)}
+else addEventListener('scroll',()=>{if(cur&&Math.abs(scrollY-sy0)>40)hide()},{passive:true});
 addEventListener('resize',()=>hide(true));
 })();
 </script>
