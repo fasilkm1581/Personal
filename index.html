@@ -737,25 +737,51 @@ document.addEventListener('mouseleave',()=>r.classList.remove('on'));
 document.querySelectorAll('a,.chip,.btn').forEach(e=>{e.addEventListener('mouseenter',()=>r.classList.add('big'));e.addEventListener('mouseleave',()=>r.classList.remove('big'))});
 (function f(){cx+=(x-cx)*.2;cy+=(y-cy)*.2;r.style.transform='translate('+cx+'px,'+cy+'px)';requestAnimationFrame(f)})()})();
 
-// voice introduction: plays once, with pause and replay
+// voice introduction: plays once, with pause and replay.
+// Apple devices speak it with the device's own male (Siri) voice when one is installed; every other browser plays the recorded voice file.
 (function(){const box=document.getElementById('voice'),pp=document.getElementById('vpp'),rp=document.getElementById('vrp'),lab=document.getElementById('vlab');if(!box)return;
-const a=new Audio('intro.mp3');a.preload='auto';
-let started=false,heldByUser=false;
+const TEXT="I'm Fahsil, an Operations Manager at Emirates Gold F Z C O in Dubai, where I've worked across gold refining and precious metals trading since December 2018. I run operations from metal intake and assay through refining, casting and dispatch, and I coordinate the trading, accounting, logistics and production teams so every lot is tracked accurately from receipt to delivery. On the trading side, I handle platforms including StoneX, Gold Standard, Vintage and Lunaro, covering spot fixing, L B M A price fixing, hedging and risk control. With a background in auditing, Neo Gold accounting and office operations, I focus on process optimization, strong team leadership and keeping compliance records in order. I work in English and Hindi, and I enjoy connecting with people in refining, bullion trading and operations.";
+const SENT=TEXT.match(/[^.]+\.\s*/g);
 const LABEL={wait:'Hear intro',playing:'Pause intro',paused:'Resume intro',ended:'Replay intro'};
+const synth=window.speechSynthesis,APPLE=/iPhone|iPad|iPod|Macintosh|Mac OS X/.test(navigator.userAgent);
+let engine=null,started=false,heldByUser=false;
 function set(s){box.dataset.s=s;lab.textContent=LABEL[s]}
-function play(){const p=a.play();if(p&&p.then)p.then(()=>{started=true;set('playing')}).catch(()=>{set(started?'paused':'wait')})}
-a.addEventListener('timeupdate',()=>{if(a.duration)box.style.setProperty('--p',(a.currentTime/a.duration).toFixed(4))});
-a.addEventListener('ended',()=>{set('ended');box.style.setProperty('--p',1)});
+function setP(p){box.style.setProperty('--p',Math.min(1,p).toFixed(4))}
+// ---- device voice (Siri male) ----
+function pickVoice(){if(!APPLE||!synth||typeof SpeechSynthesisUtterance==='undefined')return null;
+ const vs=synth.getVoices().filter(v=>/^en[-_]/i.test(v.lang));if(!vs.length)return null;
+ const femaleName=/nicky|samantha|karen|moira|tessa|kate|serena|allison|ava|susan|zoe|victoria|fiona|catherine|veena|female/i;
+ const maleNames=['Aaron','Arthur','Gordon','Daniel','Evan','Alex','Oliver','Fred','Rishi','Tom'];
+ return vs.find(v=>/siri/i.test(v.name)&&!femaleName.test(v.name))||maleNames.map(n=>vs.find(v=>v.name.indexOf(n)===0)).find(Boolean)||null}
+let voice=null,idx=0,token=0;
+function speakFrom(i){synth.cancel();idx=i;const my=++token;let began=false;
+ const next=()=>{if(my!==token)return;
+  if(idx>=SENT.length){set('ended');setP(1);return}
+  const u=new SpeechSynthesisUtterance(SENT[idx].trim());u.voice=voice;u.lang=voice.lang;u.rate=.94;u.pitch=.92;
+  u.onstart=()=>{if(my!==token)return;began=true;started=true;set('playing')};
+  u.onend=()=>{if(my!==token)return;idx++;setP(idx/SENT.length);next()};
+  u.onerror=()=>{if(my!==token)return;if(!began)set(started?'paused':'wait')};
+  synth.speak(u)};
+ setTimeout(next,60);
+ setTimeout(()=>{if(my===token&&!began){token++;synth.cancel();set(started?'paused':'wait')}},1800)}   // autoplay blocked
+// ---- recorded voice file ----
+const a=new Audio('intro.mp3');a.preload='auto';
+a.addEventListener('timeupdate',()=>{if(a.duration)setP(a.currentTime/a.duration)});
+a.addEventListener('ended',()=>{set('ended');setP(1)});
 a.addEventListener('playing',()=>set('playing'));
-pp.addEventListener('click',()=>{heldByUser=true;
- if(box.dataset.s==='playing'){a.pause();set('paused')}
- else if(box.dataset.s==='ended'){a.currentTime=0;play()}
- else play()});
-rp.addEventListener('click',()=>{heldByUser=true;a.currentTime=0;play()});
+function playFile(){const p=a.play();if(p&&p.then)p.then(()=>{started=true;set('playing')}).catch(()=>{set(started?'paused':'wait')})}
+// ---- shared controls ----
+function pick(){if(!engine){voice=pickVoice();engine=voice?'speech':'file'}return engine}
+function play(from){if(pick()==='speech'){speakFrom(from===0?0:idx)}else{if(from===0)a.currentTime=0;playFile()}}
+function pause(){if(engine==='speech'){token++;synth.cancel()}else a.pause();set('paused')}
+pp.addEventListener('click',()=>{heldByUser=true;const s=box.dataset.s;
+ if(s==='playing')pause();else if(s==='ended')play(0);else play()});
+rp.addEventListener('click',()=>{heldByUser=true;play(0)});
 // default: one automatic play. If the browser blocks autoplay, the first tap or key press starts it once.
-function first(e){if(started||heldByUser||(e.target.closest&&e.target.closest('#voice')))return;heldByUser=false;play()}
+function first(e){if(started||heldByUser||(e.target.closest&&e.target.closest('#voice')))return;play(0)}
 ['pointerdown','touchend','keydown'].forEach(ev=>addEventListener(ev,function h(e){if(started){removeEventListener(ev,h);return}first(e)},{passive:true}));
-setTimeout(()=>{if(!started&&!heldByUser)play()},4200);   // after the opening animation
+if(synth&&synth.addEventListener)synth.addEventListener('voiceschanged',()=>{if(!engine)voice=pickVoice()});
+setTimeout(()=>{if(!started&&!heldByUser)play(0)},4200);   // after the opening animation
 })();
 // slow auto scroll: pauses when the visitor takes control, resumes after a few idle seconds
 (function(){const btn=document.getElementById('auto'),lab=document.getElementById('autol');if(!btn)return;
