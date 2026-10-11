@@ -488,6 +488,14 @@ h2{font-weight:700;letter-spacing:-.03em;text-transform:none;line-height:1.08;fo
 .cform button{justify-self:start;border:0;cursor:pointer;font:inherit;font-weight:600}
 .cform button:disabled{opacity:.6;cursor:wait}
 .fstat{min-height:1.4em;font-size:.9rem;color:var(--mute)}.fstat.ok{color:#34d399}.fstat.err{color:#fb7185}
+
+/* phone: show the full portrait under the nav, fading into the page */
+@media(max-width:899px){
+ .stage{inset:64px 0 auto 0;height:auto;aspect-ratio:4/5;-webkit-mask-image:linear-gradient(#000 72%,transparent);mask-image:linear-gradient(#000 72%,transparent)}
+ .hero-vid{object-position:50% 0}
+ .stage-shade{background:linear-gradient(to top,var(--bg) 0%,transparent 40%)}
+ .hero-copy{bottom:max(120px,14vh)}
+}
 </style>
 </head>
 <body>
