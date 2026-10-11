@@ -985,7 +985,6 @@ const SCENES={
    const dyDie=c1<8.2?-110*u:c1<9?-110*u*(1-this.ease((c1-8.2)/.8)):c1<9.6?-110*u*this.ease((c1-9)/.6):-110*u;
    sg.fillStyle='#2a303b';sg.strokeStyle=rgba(T.c,.5);sg.lineWidth=2;sg.fillRect(cx-90*u,mt-60*u+dyDie,180*u,50*u);sg.strokeRect(cx-90*u,mt-60*u+dyDie,180*u,50*u);sg.fillRect(cx-14*u,mt-150*u+dyDie,28*u,92*u);
    if(c1>=9&&this.s1!==k1){this.s1=k1;this.spark(cx,mt,40,380);this.ring.push({x:cx,y:mt,l:1})}
-   const stepTxt=c1<3.6?'1 · WEIGHING 1000 g':c1<5.0?'2 · LOADING THE MOLD':c1<7.2?'3 · INDUCTION MELT 1064 °C':c1<8.2?'4 · COOLING IN THE MOLD':'5 · STAMP AND HALLMARK';
    // ---------- coin minting press ----------
    const C2=10.5,c2=t%C2,k2=Math.floor(t/C2),R=92*u+8,anvil=yR+40*u,blankX=c2<1?xR+240*u*(1-this.ease(c2)):xR;
    sg.fillStyle='#1b2029';sg.strokeStyle=rgba('#8fa0b4',.6);sg.lineWidth=2;sg.fillRect(xR-120*u,anvil,240*u,26*u);sg.strokeRect(xR-120*u,anvil,240*u,26*u);sg.fillRect(xR-120*u,yR-250*u,16*u,300*u);sg.fillRect(xR+104*u,yR-250*u,16*u,300*u);sg.fillRect(xR-120*u,yR-262*u,240*u,22*u);
@@ -998,7 +997,7 @@ const SCENES={
    if(c2>=2&&this.s2!==k2){this.s2=k2;this.spark(xR,anvil-6,46,420);this.ring.push({x:xR,y:anvil-6,l:1})}
    this.ring=this.ring.filter(r=>r.l>0);this.ring.forEach(r=>{r.l-=dt*1.6;sg.strokeStyle=rgba(T.g,Math.max(0,r.l));sg.lineWidth=3;sg.beginPath();sg.arc(r.x,r.y,(1-r.l)*160*u+10,0,7);sg.stroke()});
    this.sp=this.sp.filter(p=>p.l>0);this.sp.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=(p.g?460*u:560)*dt;if(p.g){if(p.y>=yL){p.l=0}}else p.l-=dt*1.5;sg.fillStyle=rgba(p.l>.5?T.g:T.a,Math.max(0,p.l));sg.shadowColor=T.a;sg.shadowBlur=8;sg.beginPath();sg.arc(p.x,p.y,p.s,0,7);sg.fill()});sg.shadowBlur=0;
-   sg.font='600 '+(12*u+3)+'px monospace';sg.fillStyle=rgba(T.g,.8);sg.textAlign='center';sg.fillText('KILOBAR  '+stepTxt,xL,yL+H+46*u);sg.fillText('COMMEMORATIVE COIN',xR,anvil+54*u);sg.textAlign='left'}},
+   sg.font='600 '+(12*u+3)+'px monospace';sg.fillStyle=rgba(T.g,.8);sg.textAlign='center';sg.fillText('COMMEMORATIVE COIN',xR,anvil+54*u);sg.textAlign='left'}},
  dispatch:{theme:{a:'#5aa8ff',b:'#3b57d9',c:'#8fe3ff',g:'#d3e6ff'},
   init(){const u=this.u=Math.max(.45,Math.min(1.25,Math.min(SW/1100,SH/700)));this.sea=SH*.46;this.road=SH*.79;
    this.trucks=[];const gA=780*u;for(let i=0;i<Math.ceil(SW/gA)+2;i++)this.trucks.push({x:i*gA+rnd(0,140),y:SH*.865,dir:1,v:rnd(110,150)*u,vr:i%2,rot:0});
