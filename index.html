@@ -431,6 +431,14 @@ h2{font-weight:600;letter-spacing:.01em;text-transform:uppercase;line-height:1.0
  .hero-copy{inset:0 auto 0 max(6vw,56px);bottom:0;top:0;width:min(640px,calc(100% - 12vw - 56px - (100vh - 14vh - 56px)*.5442 - 40px));justify-content:center;align-items:flex-start;padding:0}
  .hero-copy .hname{font-size:clamp(3rem,7.4vw,8rem)}
 }
+
+/* auto scroll */
+.autobtn{position:fixed;left:max(12px,2vw);bottom:calc(max(12px,2vh) + 88px);z-index:46;display:flex;align-items:center;gap:.55rem;padding:.45rem .8rem;border:1px solid var(--line);border-radius:2px;background:rgba(4,8,18,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--mute);font:500 .68rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:color .3s,border-color .3s}
+.autobtn:hover{color:var(--a);border-color:var(--a)}
+.autobtn[aria-pressed="true"]{color:var(--a)}
+.autobtn svg{width:14px;height:14px;fill:currentColor}
+.autobtn .pl{display:inline}.autobtn .ps{display:none}
+.autobtn[aria-pressed="true"] .pl{display:none}.autobtn[aria-pressed="true"] .ps{display:inline}
 </style>
 </head>
 <body>
@@ -558,6 +566,7 @@ h2{font-weight:600;letter-spacing:.01em;text-transform:uppercase;line-height:1.0
   <a class="mail glass rv mag sel" href="mailto:fasilkm1581@gmail.com">fasilkm1581@gmail.com</a>
   <div class="cta rv" style="margin-top:1.2rem"><a class="btn wa mag" href="https://wa.me/971529854864" target="_blank" rel="noopener">Chat on WhatsApp</a><a class="btn main mag" href="https://www.linkedin.com/in/fasil-km-a1857ba8" target="_blank" rel="noopener">Open LinkedIn</a></div>
 </section>
+<button class="autobtn" id="auto" type="button" aria-pressed="true" aria-label="Toggle slow auto scroll"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="pl" d="M7 4l13 8-13 8z"/><g class="ps"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></g></svg><span id="autol">Auto scroll</span></button>
 <button class="sndbtn" id="snd" type="button" aria-pressed="true" aria-label="Toggle sound effects"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="w" d="M16 9a4 4 0 0 1 0 6M18.500 6.500a8 8 0 0 1 0 11"/><path class="x" d="M17 9l5 6M22 9l-5 6"/></svg><span id="sndl">Sound on</span></button>
 <div class="hudbar" aria-hidden="true"><i></i><span>Rec</span><span class="hide">DXB <b id="hclock">--:--:--</b></span><span>Reel <b id="hpct">000</b>%</span></div>
 <div class="reticle" id="reticle" aria-hidden="true"></div>
@@ -737,6 +746,27 @@ function bars(){const p=cl(scrollY/(innerHeight*.7),0,1);lb.forEach(b=>b.style.s
 addEventListener('scroll',bars,{passive:true});bars();
 if(window.Lenis&&!matchMedia('(prefers-reduced-motion:reduce)').matches){try{const l=new Lenis({lerp:.075,wheelMultiplier:.9,anchors:true});
  (function r(t){l.raf(t);requestAnimationFrame(r)})(performance.now())}catch(e){}}
+})();
+// slow auto scroll: pauses when the visitor takes control, resumes after a few idle seconds
+(function(){const btn=document.getElementById('auto'),lab=document.getElementById('autol');if(!btn)return;
+if(matchMedia('(prefers-reduced-motion:reduce)').matches){btn.style.display='none';return}
+const SPEED=36,IDLE=4500;           // pixels per second, idle time before it resumes
+let on=true,paused=true,pos=0,last=0,exp=-1,t0=0,timer=0;
+try{if(localStorage.getItem('fz-auto')==='off')on=false}catch(e){}
+function paint(){btn.setAttribute('aria-pressed',on?'true':'false');lab.textContent=on?'Auto scroll on':'Auto scroll off'}
+function max(){return document.documentElement.scrollHeight-innerHeight}
+function hold(){paused=true;clearTimeout(timer);if(on)timer=setTimeout(()=>{pos=scrollY;last=0;paused=false},IDLE)}
+['wheel','touchstart','touchmove','keydown','mousedown'].forEach(e=>addEventListener(e,hold,{passive:true}));
+addEventListener('scroll',()=>{if(exp>=0&&Math.abs(scrollY-exp)>3){exp=-1;hold()}},{passive:true});
+btn.addEventListener('click',()=>{on=!on;try{localStorage.setItem('fz-auto',on?'on':'off')}catch(e){}paint();clearTimeout(timer);if(on){pos=scrollY;last=0;paused=false}else paused=true});
+paint();
+function step(t){requestAnimationFrame(step);if(!on||paused||document.hidden){last=0;return}
+ if(!last){last=t;pos=scrollY;return}
+ const dt=Math.min(50,t-last);last=t;pos+=SPEED*dt/1000;
+ if(pos>=max()-1){paused=true;return}
+ exp=Math.round(pos);window.scrollTo({top:pos,behavior:'instant'})}
+requestAnimationFrame(step);
+setTimeout(()=>{if(on){pos=scrollY;last=0;paused=false}},6500);   // starts after the opening animation
 })();
 </script>
 </body>
