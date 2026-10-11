@@ -452,6 +452,27 @@ h2{font-weight:600;letter-spacing:.01em;text-transform:uppercase;line-height:1.0
 @keyframes fabring{0%{transform:scale(1);opacity:.85}100%{transform:scale(1.9);opacity:0}}
 .emfab{--rc:#e8b36b}.lifab{--rc:#58a6ff}.wafab{--rc:#25d366}
 .fab-stack a:hover{filter:brightness(1.12)}
+
+/* intro voice player */
+.voice{position:fixed;left:max(12px,2vw);bottom:calc(max(12px,2vh) + 46px);z-index:46;display:flex;gap:.4rem;align-items:stretch}
+.voice button{display:flex;align-items:center;gap:.55rem;padding:.45rem .8rem;border:1px solid var(--line);border-radius:99px;background:rgba(4,8,18,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--mute);font:500 .68rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;position:relative;overflow:hidden;transition:color .3s,border-color .3s}
+.voice button:hover{color:var(--a);border-color:var(--a)}
+.voice svg{width:14px;height:14px;fill:currentColor;flex:none}
+.voice .vrp svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.voice .vrp{padding:.45rem .6rem}
+.voice .vpp::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:calc(var(--p,0)*100%);background:var(--a)}
+.voice[data-s="playing"] .vpp{color:var(--a);border-color:rgba(232,179,107,.5)}
+.voice .ip,.voice .ic{display:none}
+.voice[data-s="playing"] .ip{display:inline}
+.voice[data-s="wait"] .ic,.voice[data-s="paused"] .ic,.voice[data-s="ended"] .ic{display:inline}
+.voice[data-s="playing"] .ic{display:none}
+.voice .eq{display:none;gap:2px;align-items:flex-end;height:12px}
+.voice[data-s="playing"] .eq{display:inline-flex}
+.voice[data-s="playing"] .ip,.voice[data-s="playing"] .ic{display:none}
+.voice .eq i{width:2px;background:currentColor;animation:eqb 1s ease-in-out infinite;height:30%}
+.voice .eq i:nth-child(2){animation-delay:-.3s}.voice .eq i:nth-child(3){animation-delay:-.6s}.voice .eq i:nth-child(4){animation-delay:-.15s}
+@keyframes eqb{50%{height:100%}}
+@media(prefers-reduced-motion:reduce){.voice .eq i{animation:none}}
 </style>
 </head>
 <body>
@@ -586,7 +607,7 @@ h2{font-weight:600;letter-spacing:.01em;text-transform:uppercase;line-height:1.0
   <div class="cta rv" style="margin-top:1.2rem"><a class="btn main mag" href="mailto:fasilkm1581@gmail.com">Send email</a><a class="btn wa mag" href="https://wa.me/971529854864" target="_blank" rel="noopener">Chat on WhatsApp</a><a class="btn main mag" href="https://www.linkedin.com/in/fasil-km-a1857ba8" target="_blank" rel="noopener">Open LinkedIn</a></div>
 </section>
 <button class="autobtn" id="auto" type="button" aria-pressed="true" aria-label="Toggle slow auto scroll"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="pl" d="M7 4l13 8-13 8z"/><g class="ps"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></g></svg><span id="autol">Auto scroll</span></button>
-<button class="sndbtn" id="snd" type="button" aria-pressed="true" aria-label="Toggle sound effects"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="w" d="M16 9a4 4 0 0 1 0 6M18.500 6.500a8 8 0 0 1 0 11"/><path class="x" d="M17 9l5 6M22 9l-5 6"/></svg><span id="sndl">Sound on</span></button>
+<div class="voice" id="voice" data-s="wait" aria-label="Voice introduction controls"><button class="vpp" id="vpp" type="button" aria-label="Play or pause the voice introduction"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span id="vlab">Hear intro</span></button><button class="vrp" id="vrp" type="button" aria-label="Replay the voice introduction from the start" title="Replay"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button></div>
 <div class="hudbar" aria-hidden="true"><span>Dubai, UAE</span><b id="hclock">--:--:--</b><span hidden>Reel <b id="hpct">000</b>%</span></div>
 <div class="reticle" id="reticle" aria-hidden="true"></div>
 <div class="fab-stack"><a class="emfab" data-tip="Email me" href="mailto:fasilkm1581@gmail.com" aria-label="Send an email to fasilkm1581@gmail.com" title="fasilkm1581@gmail.com"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 7l8.500 6.500L20.500 7"/></svg></a><a class="lifab" data-tip="LinkedIn" href="https://www.linkedin.com/in/fasil-km-a1857ba8" target="_blank" rel="noopener" aria-label="Open LinkedIn profile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4v11.5H3zM9.75 9.75h3.8v1.6h.05c.55-1 1.9-2 3.9-2 4.100 0 4.500 2.700 4.500 6.200v5.700h-4v-5c0-1.200 0-2.800-1.700-2.800s-2 1.300-2 2.700v5.100h-4z"/></svg></a><a class="wafab" data-tip="WhatsApp" href="https://wa.me/971529854864" target="_blank" rel="noopener" aria-label="Chat on WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3C9.4 3 4 8.3 4 14.9c0 2.3.7 4.5 1.9 6.3L4 28l7-1.8c1.7.9 3.9 1.4 5 1.4 6.6 0 12-5.3 12-11.9S22.600 3 16 3zm0 21.800c-1.600 0-3.200-.5-4.500-1.300l-.3-.2-4 1 1.100-3.900-.2-.3a9.700 9.700 0 0 1-1.500-5.200c0-5.400 4.400-9.700 9.900-9.700s9.900 4.300 9.900 9.700-4.400 9.900-10.400 9.900zm5.400-7.300c-.3-.1-1.700-.8-2-.9-.3-.1-.5-.1-.7.1l-.9 1.100c-.2.200-.3.200-.6.100-1.700-.8-2.800-1.500-3.900-3.400-.3-.5.300-.5.900-1.600.1-.2 0-.4 0-.5l-.9-2.100c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.100-.8.400s-1 1-1 2.400 1 2.800 1.200 3c.1.200 2.100 3.200 5.100 4.500 1.900.8 2.600.9 3.600.7.600-.1 1.700-.7 2-1.400.2-.7.200-1.200.2-1.400-.1-.1-.3-.2-.6-.3z"/></svg></a></div>
@@ -716,55 +737,25 @@ document.addEventListener('mouseleave',()=>r.classList.remove('on'));
 document.querySelectorAll('a,.chip,.btn').forEach(e=>{e.addEventListener('mouseenter',()=>r.classList.add('big'));e.addEventListener('mouseleave',()=>r.classList.remove('big'))});
 (function f(){cx+=(x-cx)*.2;cy+=(y-cy)*.2;r.style.transform='translate('+cx+'px,'+cy+'px)';requestAnimationFrame(f)})()})();
 
-// sound effects (Web Audio, synthesized: soft, low-level UI sounds, no audio files)
-(function(){const AC=window.AudioContext||window.webkitAudioContext;const btn=document.getElementById('snd'),lab=document.getElementById('sndl');if(!btn)return;
-if(!AC){btn.style.display='none';return}
-let ctx=null,out=null,on=true,noise=null,unlocked=false;
-try{if(localStorage.getItem('fz-sound')==='off')on=false}catch(e){}
-function paint(){btn.setAttribute('aria-pressed',on?'true':'false');lab.textContent=on?(unlocked?'Sound on':'Tap for sound'):'Sound off'}
-function init(){if(ctx)return;try{ctx=new AC();
- const comp=ctx.createDynamicsCompressor();comp.threshold.value=-24;comp.ratio.value=4;
- const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=5000;
- out=ctx.createGain();out.gain.value=.55;out.connect(lp);lp.connect(comp);comp.connect(ctx.destination);
- const n=ctx.sampleRate,buf=ctx.createBuffer(1,n,ctx.sampleRate),d=buf.getChannelData(0);let b=0;
- for(let i=0;i<n;i++){const w=Math.random()*2-1;b=(b+.04*w)/1.04;d[i]=b*8}  // brown noise: warm, not hissy
- noise=buf}catch(e){ctx=null}}
-function unlock(){init();if(ctx&&ctx.state!=='running')ctx.resume().then(()=>{unlocked=true;paint()}).catch(()=>{});else if(ctx){unlocked=true;paint()}}
-['pointerdown','touchend','keydown','click'].forEach(ev=>addEventListener(ev,unlock,{passive:true}));
-function ok(){return on&&ctx&&ctx.state==='running'}
-// soft tactile tick: a few ms of filtered noise, like a fine dial
-function tick(){if(!ok())return;const t=ctx.currentTime,s=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();
- s.buffer=noise;s.playbackRate.value=1.4;f.type='bandpass';f.frequency.value=1500;f.Q.value=.7;
- g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.16,t+.003);g.gain.exponentialRampToValueAtTime(.0001,t+.03);
- s.connect(f);f.connect(g);g.connect(out);s.start(t,Math.random()*.5);s.stop(t+.05)}
-// gentle air swell for quick scrolling
-function swell(v){if(!ok())return;const t=ctx.currentTime,s=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();
- s.buffer=noise;f.type='lowpass';f.Q.value=.5;f.frequency.setValueAtTime(250,t);f.frequency.exponentialRampToValueAtTime(900,t+.4);
- g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(Math.min(.2,.07+v*.02),t+.18);g.gain.exponentialRampToValueAtTime(.0001,t+.6);
- s.connect(f);f.connect(g);g.connect(out);s.start(t,Math.random()*.3);s.stop(t+.65)}
-// soft low pulse when a new section is reached
-function pulse(){if(!ok())return;const t=ctx.currentTime,o=ctx.createOscillator(),g=ctx.createGain(),f=ctx.createBiquadFilter();
- o.type='sine';o.frequency.setValueAtTime(210,t);o.frequency.exponentialRampToValueAtTime(130,t+.25);f.type='lowpass';f.frequency.value=700;
- g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.22,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.32);
- o.connect(f);f.connect(g);g.connect(out);o.start(t);o.stop(t+.35)}
-let wasLocked=false;btn.addEventListener('pointerdown',()=>{wasLocked=!unlocked});
-btn.addEventListener('click',()=>{if(on&&(wasLocked||!unlocked)){wasLocked=false;unlock();setTimeout(pulse,200);return}on=!on;try{localStorage.setItem('fz-sound',on?'on':'off')}catch(e){}unlock();paint();if(on)setTimeout(pulse,60)});
-paint();
-// scroll sounds
-let lastY=scrollY,lastT=performance.now(),acc=0,lastW=0,cur='';const secs=[...document.querySelectorAll('section')];
-addEventListener('scroll',()=>{const y=scrollY,t=performance.now(),dy=Math.abs(y-lastY),dt=Math.max(1,t-lastT);lastY=y;lastT=t;
- if(!ok())return;const v=dy/dt;acc+=dy;
- if(acc>240){acc=0;tick()}
- if(v>2.2&&t-lastW>900){lastW=t;swell(v)}
- let c=secs[0]?secs[0].id:'';secs.forEach(s=>{if(s.getBoundingClientRect().top<innerHeight*.4)c=s.id});
- if(c!==cur){if(cur)pulse();cur=c}},{passive:true});
-})();
-// cinematic smooth scroll + letterbox bars
-(function(){const lb=[...document.querySelectorAll('.lb')];const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
-function bars(){const p=cl(scrollY/(innerHeight*.7),0,1);lb.forEach(b=>b.style.scale='1 '+(1-p).toFixed(3))}
-addEventListener('scroll',bars,{passive:true});bars();
-if(window.Lenis&&!matchMedia('(prefers-reduced-motion:reduce)').matches){try{const l=new Lenis({lerp:.075,wheelMultiplier:.9,anchors:true});
- (function r(t){l.raf(t);requestAnimationFrame(r)})(performance.now())}catch(e){}}
+// voice introduction: plays once, with pause and replay
+(function(){const box=document.getElementById('voice'),pp=document.getElementById('vpp'),rp=document.getElementById('vrp'),lab=document.getElementById('vlab');if(!box)return;
+const a=new Audio('intro.mp3');a.preload='auto';
+let started=false,heldByUser=false;
+const LABEL={wait:'Hear intro',playing:'Pause intro',paused:'Resume intro',ended:'Replay intro'};
+function set(s){box.dataset.s=s;lab.textContent=LABEL[s]}
+function play(){const p=a.play();if(p&&p.then)p.then(()=>{started=true;set('playing')}).catch(()=>{set(started?'paused':'wait')})}
+a.addEventListener('timeupdate',()=>{if(a.duration)box.style.setProperty('--p',(a.currentTime/a.duration).toFixed(4))});
+a.addEventListener('ended',()=>{set('ended');box.style.setProperty('--p',1)});
+a.addEventListener('playing',()=>set('playing'));
+pp.addEventListener('click',()=>{heldByUser=true;
+ if(box.dataset.s==='playing'){a.pause();set('paused')}
+ else if(box.dataset.s==='ended'){a.currentTime=0;play()}
+ else play()});
+rp.addEventListener('click',()=>{heldByUser=true;a.currentTime=0;play()});
+// default: one automatic play. If the browser blocks autoplay, the first tap or key press starts it once.
+function first(e){if(started||heldByUser||(e.target.closest&&e.target.closest('#voice')))return;heldByUser=false;play()}
+['pointerdown','touchend','keydown'].forEach(ev=>addEventListener(ev,function h(e){if(started){removeEventListener(ev,h);return}first(e)},{passive:true}));
+setTimeout(()=>{if(!started&&!heldByUser)play()},4200);   // after the opening animation
 })();
 // slow auto scroll: pauses when the visitor takes control, resumes after a few idle seconds
 (function(){const btn=document.getElementById('auto'),lab=document.getElementById('autol');if(!btn)return;
