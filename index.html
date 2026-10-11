@@ -506,6 +506,15 @@ body.scene-on :is(#company .co .stat,#company .cert,#process .step,#skills .card
 :is(#company .co .stat,#company .cert,#process .step,#skills .card){transition:opacity .35s ease,filter .35s ease}
 body.scene-on .glass{background-color:rgba(5,6,7,.16)!important;backdrop-filter:blur(2px)!important;-webkit-backdrop-filter:blur(2px)!important}
 .glass{transition:background-color .4s ease}
+/* floating buttons follow the site theme (and the hover scene colours) */
+.fab-stack a,.fab-stack a.wafab{background:linear-gradient(145deg,rgba(18,16,12,.82),rgba(5,6,7,.9))!important;border:1.5px solid var(--a);box-shadow:0 10px 30px -8px var(--a),inset 0 0 14px -6px var(--a)!important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);animation:none!important;transition:transform .3s,border-color .4s,box-shadow .4s}
+.fab-stack a svg{fill:var(--a)!important;stroke:none;transition:fill .4s}
+.fab-stack .emfab svg{fill:none!important;stroke:var(--a)!important}
+.fab-stack a:hover{background:var(--grad)!important;border-color:var(--g)}
+.fab-stack a:hover svg{fill:#1a1205!important}
+.fab-stack .emfab:hover svg{fill:none!important;stroke:#1a1205!important}
+.emfab,.lifab,.wafab{--rc:var(--a)}
+.fab-stack .wafab{right:auto;bottom:auto}
 </style>
 </head>
 <body>
