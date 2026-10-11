@@ -472,7 +472,10 @@ h2{font-weight:600;letter-spacing:.01em;text-transform:uppercase;line-height:1.0
 .pop{padding:1rem 1.25rem 1.1rem}
 .pop p{color:var(--fg);font-size:1.05rem;line-height:1.65}
 .is-popped>*,.step.is-popped::before{opacity:1!important}
-.is-popped p{opacity:.06!important}
+.is-popped p{opacity:1!important}
+@property --ang{syntax:'<angle>';inherits:false;initial-value:0deg}
+.hring{position:absolute;inset:-2px;border-radius:inherit;padding:2px;pointer-events:none;background:conic-gradient(from var(--ang),transparent 0 62%,var(--a) 80%,var(--g) 92%,transparent);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);animation:ringspin 1.6s linear infinite}
+@keyframes ringspin{to{--ang:360deg}}
 .pop{background:none!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding:0!important;text-align:center;width:min(520px,calc(100vw - 32px))}
 .pop::after{display:none!important}
 .pop p{font-size:clamp(1.15rem,2.2vw,1.55rem)!important;line-height:1.55!important;color:#fff!important;text-shadow:0 2px 22px #000,0 0 40px rgba(0,0,0,.9)}
@@ -1249,20 +1252,17 @@ function burst(cx,cy){
   if(long){s.style.width='3px';s.style.height=(10+Math.random()*10)+'px'}else{const z=4+Math.random()*6;s.style.width=s.style.height=z+'px'}
   document.body.appendChild(s);
   animate(s,{x:[0,Math.cos(a)*d],y:[0,Math.sin(a)*d],rotate:[0,(Math.random()-.5)*540],scale:[1,.1],opacity:[1,0]},{duration:.55+Math.random()*.45,ease:[.1,.7,.3,1]}).then(()=>s.remove())}}
-let popEl=null,veil=null;
-function hide(instant,keep){const b=cur,p=popEl,v=veil;cur=null;popEl=null;veil=null;if(b){b.classList.remove('is-popped');animate(b,{scale:1},{type:'spring',stiffness:300,damping:22})}if(!keep)Scene.stop();
- [p,v].forEach(el=>{if(!el)return;if(instant)el.remove();else animate(el,{opacity:0,scale:el===p?.8:1},{duration:.18}).then(()=>el.remove())})}
+let tiltFn=null;
+function hide(instant,keep){const b=cur;cur=null;if(b){b.classList.remove('is-popped');const pp=b.querySelector('p');if(pp&&b.dataset.orig)pp.textContent=b.dataset.orig;b.querySelectorAll('.hring,.sweep').forEach(x=>x.remove());if(tiltFn){b.removeEventListener('mousemove',tiltFn);tiltFn=null}animate(b,{scale:1,rotateX:0,rotateY:0},{type:'spring',stiffness:260,damping:20})}if(!keep)Scene.stop()}
 function show(box){if(cur===box)return;hide(true,true);cur=box;sy0=scrollY;Scene.start(sceneKey(box));
- const r=box.getBoundingClientRect(),c=info(box),p=document.createElement('div');p.className='pop';p.innerHTML='<p></p>';p.querySelector('p').textContent=c.x;
- p.style.visibility='hidden';document.body.appendChild(p);
- const w=p.offsetWidth,h=p.offsetHeight,cx=r.left+r.width/2;
- let left=Math.max(16,Math.min(innerWidth-w-16,cx-w/2)),top=r.top-h-28;if(top<84){top=r.bottom+28;if(top+h>innerHeight-16)top=Math.max(84,innerHeight-h-16)}
- p.style.left=left+'px';p.style.top=top+'px';p.style.transformOrigin='50% 50%';p.style.visibility='';
- const vl=document.createElement('div');vl.className='popveil';vl.style.setProperty('--vx',(left+w/2)+'px');vl.style.setProperty('--vy',(top+h/2)+'px');document.body.insertBefore(vl,p);
- box.classList.add('is-popped');popEl=p;veil=vl;
- animate(vl,{opacity:[0,1]},{duration:.35});
- animate(p,{opacity:[0,1],scale:[.35,1],filter:['blur(12px)','blur(0px)']},{type:'spring',stiffness:210,damping:19});
- animate(box,{scale:[1,1.04]},{type:'spring',stiffness:320,damping:18})}
+ box.classList.add('is-popped');const pp=box.querySelector('p');
+ if(pp){if(!box.dataset.orig)box.dataset.orig=pp.textContent;const ws=[];pp.textContent='';box.dataset.orig.split(/(\s+)/).forEach(w=>{if(/^\s+$/.test(w)){pp.appendChild(document.createTextNode(' '));return}const sp=document.createElement('span');sp.className='w';sp.textContent=w;sp.style.opacity=0;pp.appendChild(sp);ws.push(sp)});
+  animate(ws,{opacity:[0,1],y:[14,0],filter:['blur(6px)','blur(0px)']},{delay:stagger(.03,{startDelay:.12}),duration:.45,ease:[.2,.8,.2,1]})}
+ if(getComputedStyle(box).position==='static')box.style.position='relative';
+ const ring=document.createElement('i');ring.className='hring';box.appendChild(ring);
+ const sw=document.createElement('i');sw.className='sweep';box.appendChild(sw);animate(sw,{x:['-120%','380%']},{duration:.9,ease:'easeInOut'}).then(()=>sw.remove());
+ animate(box,{scale:[1,1.07]},{type:'spring',stiffness:320,damping:14});
+ tiltFn=e=>{const r=box.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;animate(box,{rotateY:x*16,rotateX:-y*16},{type:'spring',stiffness:200,damping:18})};box.addEventListener('mousemove',tiltFn)}
 let lastHold=0;
 function holdAutoScroll(){const t=performance.now();if(t-lastHold>500){lastHold=t;window.dispatchEvent(new Event('mousedown'))}}   // keeps the slow auto scroll paused while hovering
 boxes.forEach(b=>{
@@ -1271,7 +1271,7 @@ boxes.forEach(b=>{
   b.addEventListener('pointerleave',()=>{if(cur===b)hide()})}
  else b.addEventListener('click',()=>{cur===b?hide():show(b)})});
 if(touch)document.addEventListener('click',e=>{if(!e.target.closest('#process .step,#skills .card'))hide()});
-addEventListener('scroll',()=>{if(popEl&&Math.abs(scrollY-sy0)>40)hide()},{passive:true});
+addEventListener('scroll',()=>{if(cur&&Math.abs(scrollY-sy0)>40)hide()},{passive:true});
 addEventListener('resize',()=>hide(true));
 })();
 </script>
