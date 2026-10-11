@@ -785,7 +785,7 @@ document.querySelectorAll('a,.chip,.btn').forEach(e=>{e.addEventListener('mousee
 // slow auto scroll: pauses when the visitor takes control, resumes after a few idle seconds
 (function(){const btn=document.getElementById('auto'),lab=document.getElementById('autol');if(!btn)return;
 if(matchMedia('(prefers-reduced-motion:reduce)').matches){btn.style.display='none';return}
-const SPEED=36,IDLE=4500;           // pixels per second, idle time before it resumes
+const SPEED=50,IDLE=4500;           // pixels per second, idle time before it resumes
 let on=true,paused=true,pos=0,last=0,exp=-1,t0=0,timer=0;
 try{if(localStorage.getItem('fz-auto')==='off')on=false}catch(e){}
 function paint(){btn.setAttribute('aria-pressed',on?'true':'false');lab.textContent=on?'Auto scroll on':'Auto scroll off'}
