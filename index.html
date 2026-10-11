@@ -1193,13 +1193,19 @@ const SCENES={
     if(ok){sg.fillStyle='#5fd38d';sg.beginPath();sg.arc(b.x+w-12,b.y+h-6,13*u+2,0,7);sg.fill();sg.strokeStyle='#04210f';sg.lineWidth=3;sg.beginPath();sg.moveTo(b.x+w-18*u-2,b.y+h-6);sg.lineTo(b.x+w-13*u,b.y+h-1);sg.lineTo(b.x+w-6*u,b.y+h-12)}sg.stroke()});
    const n=Math.floor((t*.7)%6),sx=SW*(SW>700?.76:.2),sy=SH*.12;for(let i=0;i<5;i++){const fx=sx+i*44*u,on=i<n;sg.fillStyle=on?T.g:rgba(T.c,.25);sg.beginPath();for(let k=0;k<10;k++){const a=-1.5708+k*.6283,r=(k%2?7:16)*u+2;k?sg.lineTo(fx+Math.cos(a)*r,sy+Math.sin(a)*r):sg.moveTo(fx+Math.cos(a)*r,sy+Math.sin(a)*r)}sg.closePath();sg.fill()}}},
  iso17025:{theme:{a:'#d4f35a',b:'#5a8a00',c:'#fff6a8',g:'#fbffe0'},
-  init(){this.bub=Array.from({length:50},()=>({x:rnd(0,1),y:rnd(0,1),r:rnd(1.5,4.5),v:rnd(.05,.18),f:Math.floor(rnd(0,3))}))},
+  init(){this.bub=Array.from({length:30},(_,i)=>({f:i%3,p:Math.random(),o:rnd(-.3,.3),r:rnd(1.5,3.5),v:rnd(.12,.3)}))},
   draw(t,dt){const T=this.theme,u=Math.min(SW,SH)/700,base=SH*.8;
-   for(let f=0;f<3;f++){const fx=SW*(SW>700?.42:.2)+f*170*u,fw=120*u,fh=190*u;sg.strokeStyle=rgba(T.g,.75);sg.lineWidth=2.5;sg.beginPath();sg.moveTo(fx+fw*.38,base-fh);sg.lineTo(fx+fw*.38,base-fh*.62);sg.lineTo(fx,base);sg.lineTo(fx+fw,base);sg.lineTo(fx+fw*.62,base-fh*.62);sg.lineTo(fx+fw*.62,base-fh);sg.stroke();
-    const lv=.28+.06*Math.sin(t*1.4+f),ly=base-fh*.62*lv*2.2;sg.fillStyle=rgba(f===1?T.a:T.c,.5);sg.beginPath();sg.moveTo(fx+(fw*.38)*(1-(base-ly)/(fh*.62))*.0+ (base-ly)/(fh*.62)*fw*.38*.0,ly);sg.lineTo(fx+fw*.07*(ly<base-fh*.62?0:1)+((base-ly)/(fh*.62))*fw*.31*-1+fw*.31*((base-ly)/(fh*.62)),ly);sg.lineTo(fx+fw,base);sg.lineTo(fx,base);sg.closePath();sg.fill();
-    this.bub.filter(b=>b.f===f).forEach(b=>{b.y-=b.v*dt;if(b.y<0)b.y=1;sg.strokeStyle=rgba(T.g,.5);sg.beginPath();sg.arc(fx+fw*.2+b.x*fw*.6,base-b.y*fh*.55,b.r*u+1,0,7);sg.stroke()})}
+   for(let f=0;f<3;f++){const fx=SW*(SW>700?.42:.2)+f*170*u,fw=120*u,fh=190*u,top=base-fh,sh=base-fh*.62,midx=fx+fw/2;
+    const path=()=>{sg.beginPath();sg.moveTo(fx+fw*.38,top);sg.lineTo(fx+fw*.38,sh);sg.lineTo(fx,base);sg.lineTo(fx+fw,base);sg.lineTo(fx+fw*.62,sh);sg.lineTo(fx+fw*.62,top)};
+    const Lh=fh*(.2+.04*Math.sin(t*1.4+f)),ly=base-Lh,col=f===1?T.a:T.c;
+    sg.save();path();sg.closePath();sg.clip();
+    const lg=sg.createLinearGradient(0,ly,0,base);lg.addColorStop(0,rgba(col,.75));lg.addColorStop(1,rgba(col,.35));sg.fillStyle=lg;sg.fillRect(fx,ly,fw,Lh);
+    sg.strokeStyle=rgba(T.g,.75);sg.lineWidth=2;sg.beginPath();for(let x=fx;x<=fx+fw;x+=4){const y=ly+Math.sin(x*.12+t*3+f)*2;x===fx?sg.moveTo(x,y):sg.lineTo(x,y)}sg.stroke();
+    this.bub.forEach(b=>{if(b.f!==f)return;b.p+=b.v*dt;if(b.p>1)b.p=0;const y=base-5-b.p*(Lh-10),k=(base-y)/(fh*.38),wy=fw*(1-.62*Math.min(1,k)),x=midx+b.o*wy;sg.strokeStyle=rgba(T.g,.65);sg.lineWidth=1.5;sg.beginPath();sg.arc(x,y,b.r*u+1,0,7);sg.stroke()});
+    sg.restore();
+    sg.strokeStyle=rgba(T.g,.85);sg.lineWidth=2.5;path();sg.stroke();sg.beginPath();sg.moveTo(fx+fw*.33,top);sg.lineTo(fx+fw*.67,top);sg.stroke()}
    const rx=SW*.06,ry=SH*.2,rr=Math.min(SW,SH)*.12;sg.save();sg.translate(rx+rr,ry+rr);sg.rotate(t*.8);for(let k=0;k<12;k++){sg.fillStyle=rgba(k%2?T.a:T.c,.5);sg.beginPath();sg.moveTo(0,0);sg.arc(0,0,rr,k*.5236,(k+1)*.5236);sg.closePath();sg.fill()}sg.restore();
-   sg.fillStyle='rgba(8,14,4,.7)';sg.strokeStyle=rgba(T.a,.7);const px=SW*(SW>700?.7:.5),py=SH*.14,pw=230*u+60,ph=90*u+20;sg.fillRect(px,py,pw,ph);sg.strokeRect(px,py,pw,ph);sg.fillStyle=T.a;sg.font='700 '+(46*u+10)+'px monospace';const v=(999.0+0.9*Math.abs(Math.sin(t*1.7))).toFixed(1);sg.fillText(v,px+14,py+ph*.72);
+   sg.fillStyle='rgba(8,14,4,.7)';sg.strokeStyle=rgba(T.a,.7);sg.lineWidth=2;const pw=Math.min(230*u+60,SW*.5),ph=90*u+20,px=SW*(SW>700?.7:.5)-(SW>700?0:pw/2),py=SH*.14;sg.fillRect(px,py,pw,ph);sg.strokeRect(px,py,pw,ph);sg.fillStyle=T.a;sg.font='700 '+Math.min(46*u+10,pw/4.2)+'px monospace';sg.fillText((999.0+0.9*Math.abs(Math.sin(t*1.7))).toFixed(1),px+14,py+ph*.72);
    sg.strokeStyle=rgba(T.g,.5);sg.lineWidth=1;for(let x=0;x<SW;x+=14){const h=x%70===0?22:(x%35===0?15:9);sg.beginPath();sg.moveTo(x,SH);sg.lineTo(x,SH-h);sg.stroke()}}}
 };
 const Scene={key:null,raf:0,alpha:0,target:0,t0:0,last:0,
