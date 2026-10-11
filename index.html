@@ -757,7 +757,7 @@ let voice=null,idx=0,token=0;
 function speakFrom(i){synth.cancel();idx=i;const my=++token;let began=false;
  const next=()=>{if(my!==token)return;
   if(idx>=SENT.length){set('ended');setP(1);return}
-  const u=new SpeechSynthesisUtterance(SENT[idx].trim());u.voice=voice;u.lang=voice.lang;u.rate=.94;u.pitch=.92;
+  const u=new SpeechSynthesisUtterance(SENT[idx].trim());u.voice=voice;u.lang=voice.lang;u.rate=1;u.pitch=1.05;
   u.onstart=()=>{if(my!==token)return;began=true;started=true;set('playing')};
   u.onend=()=>{if(my!==token)return;idx++;setP(idx/SENT.length);next()};
   u.onerror=()=>{if(my!==token)return;if(!began)set(started?'paused':'wait')};
