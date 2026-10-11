@@ -476,6 +476,18 @@ h2{font-weight:700;letter-spacing:-.03em;text-transform:none;line-height:1.08;fo
 .stage::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 4px);mix-blend-mode:overlay}
 @media(min-width:900px){.stage{box-shadow:0 0 100px -20px rgba(34,211,238,.45),0 0 60px -10px rgba(139,92,246,.35);border-color:rgba(34,211,238,.35)}}
 @media(prefers-reduced-motion:reduce){.stage-scan{animation:none;opacity:0}}
+
+/* contact form */
+.cform{max-width:640px;margin:2.2rem auto 0;padding:1.6rem;text-align:left;display:grid;gap:1rem}
+.cform h3{font-family:var(--serif);font-size:1.25rem}
+.cform .row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:560px){.cform .row{grid-template-columns:1fr}}
+.cform label{display:grid;gap:.4rem;font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.cform input,.cform textarea{font:inherit;font-family:var(--sans);font-size:1rem;letter-spacing:0;text-transform:none;color:var(--fg);background:rgba(4,6,15,.6);border:1px solid var(--line);border-radius:10px;padding:.7rem .9rem;width:100%;resize:vertical;transition:border-color .25s,box-shadow .25s}
+.cform input:focus,.cform textarea:focus{outline:none;border-color:var(--a);box-shadow:0 0 0 3px rgba(34,211,238,.2),0 0 24px -6px rgba(34,211,238,.6)}
+.cform button{justify-self:start;border:0;cursor:pointer;font:inherit;font-weight:600}
+.cform button:disabled{opacity:.6;cursor:wait}
+.fstat{min-height:1.4em;font-size:.9rem;color:var(--mute)}.fstat.ok{color:#34d399}.fstat.err{color:#fb7185}
 </style>
 </head>
 <body>
@@ -605,6 +617,14 @@ h2{font-weight:700;letter-spacing:-.03em;text-transform:none;line-height:1.08;fo
   <h2 class="rv">Let's <span class="grad">connect.</span></h2>
   <a class="mail glass rv mag sel" id="mail" href="#" hidden></a>
   <div class="cta rv" style="margin-top:1.2rem"><a class="btn wa mag" data-wa href="#" target="_blank" rel="noopener" hidden>Chat on WhatsApp</a><a class="btn main mag" data-li href="#" target="_blank" rel="noopener" hidden>Open LinkedIn</a></div>
+  <form class="cform glass rv" id="cform" novalidate>
+    <h3>Send a message</h3>
+    <div class="row"><label>Name<input name="name" type="text" autocomplete="name" required maxlength="80"></label><label>Email<input name="email" type="email" autocomplete="email" required maxlength="120"></label></div>
+    <label>Message<textarea name="message" rows="5" required maxlength="2000"></textarea></label>
+    <input type="text" name="_honey" tabindex="-1" autocomplete="off" style="display:none">
+    <button class="btn main mag" type="submit">Send message</button>
+    <p class="fstat" id="fstat" role="status" aria-live="polite"></p>
+  </form>
   <p class="addr rv" id="nocontact" hidden>Contact details coming soon.</p>
 </section>
 <button class="sndbtn" id="snd" type="button" aria-pressed="true" aria-label="Toggle sound effects"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="w" d="M16 9a4 4 0 0 1 0 6M18.500 6.500a8 8 0 0 1 0 11"/><path class="x" d="M17 9l5 6M22 9l-5 6"/></svg><span id="sndl">Sound on</span></button>
@@ -800,6 +820,19 @@ addEventListener('scroll',bars,{passive:true});bars();
 if(window.Lenis&&!matchMedia('(prefers-reduced-motion:reduce)').matches){try{const l=new Lenis({lerp:.075,wheelMultiplier:.9,anchors:true});
  (function r(t){l.raf(t);requestAnimationFrame(r)})(performance.now())}catch(e){}}
 })();
+
+// contact form: sends email through FormSubmit (no backend needed)
+(function(){const f=document.getElementById('cform');if(!f)return;const st=document.getElementById('fstat'),btn=f.querySelector('button');
+f.addEventListener('submit',async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(f));
+ if(!d.name.trim()||!/^\S+@\S+\.\S+$/.test(d.email)||!d.message.trim()){st.className='fstat err';st.textContent='Please fill in your name, a valid email and a message.';return}
+ if(d._honey)return;
+ btn.disabled=true;st.className='fstat';st.textContent='Sending...';
+ try{const r=await fetch('https://formsubmit.co/ajax/faheemppkaloth@gmail.com',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
+  body:JSON.stringify({name:d.name,email:d.email,message:d.message,_subject:'Portfolio message from '+d.name,_replyto:d.email,_template:'table',_captcha:'false'})});
+  const j=await r.json().catch(()=>({}));if(!r.ok||j.success==='false')throw 0;
+  st.className='fstat ok';st.textContent='Thanks, your message was sent.';f.reset()}
+ catch(x){st.className='fstat err';st.textContent='Could not send. Please email faheemppkaloth@gmail.com directly.'}
+ btn.disabled=false})})();
 </script>
 </body>
 </html>
