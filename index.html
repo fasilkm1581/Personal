@@ -936,9 +936,9 @@ const SCENES={
    this.sp=this.sp.filter(p=>p.l>0);this.sp.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=(p.g?460*u:560)*dt;if(p.g){if(p.y>=yL){p.l=0}}else p.l-=dt*1.5;sg.fillStyle=rgba(p.l>.5?T.g:T.a,Math.max(0,p.l));sg.shadowColor=T.a;sg.shadowBlur=8;sg.beginPath();sg.arc(p.x,p.y,p.s,0,7);sg.fill()});sg.shadowBlur=0;
    sg.font='600 '+(12*u+3)+'px monospace';sg.fillStyle=rgba(T.g,.8);sg.textAlign='center';sg.fillText('COMMEMORATIVE COIN',xR,anvil+54*u);sg.textAlign='left'}},
  dispatch:{theme:{a:'#5aa8ff',b:'#3b57d9',c:'#8fe3ff',g:'#d3e6ff'},
-  init(){const u=this.u=Math.max(.45,Math.min(1.25,Math.min(SW/1100,SH/700)));this.sea=SH*.46;this.road=SH*.79;
-   this.trucks=[];const gA=780*u;for(let i=0;i<Math.ceil(SW/gA)+2;i++)this.trucks.push({x:i*gA+rnd(0,140),y:SH*.865,dir:1,v:rnd(110,150)*u,vr:i%2,rot:0});
-   const gB=920*u;for(let i=0;i<Math.ceil(SW/gB)+2;i++)this.trucks.push({x:SW-i*gB-rnd(0,140),y:SH*.955,dir:-1,v:rnd(80,110)*u,vr:(i+1)%2,rot:0});
+  init(){const u=this.u=Math.max(.45,Math.min(1.25,Math.min(SW/1100,SH/700)));this.sea=SH*.46;this.road=SH*.76;
+   this.trucks=[];const gA=780*u;for(let i=0;i<Math.ceil(SW/gA)+2;i++)this.trucks.push({x:i*gA+rnd(0,140),y:SH*.835,dir:1,v:rnd(110,150)*u,vr:i%2,rot:0});
+   const gB=920*u;for(let i=0;i<Math.ceil(SW/gB)+2;i++)this.trucks.push({x:SW-i*gB-rnd(0,140),y:SH*.905,dir:-1,v:rnd(80,110)*u,vr:(i+1)%2,rot:0});
    this.ships=[{x:rnd(0,SW),y:SH*.64,dir:1,v:24*u,s:1},{x:rnd(0,SW),y:SH*.545,dir:-1,v:12*u,s:.5}];
    this.planes=[{x:rnd(0,SW),y:SH*.15,dir:1,v:125*u,s:1},{x:rnd(0,SW),y:SH*.29,dir:-1,v:72*u,s:.55}];
    this.clouds=Array.from({length:6},()=>({x:rnd(0,SW),y:rnd(.05,.4)*SH,w:rnd(120,280),v:rnd(4,12)}))},
