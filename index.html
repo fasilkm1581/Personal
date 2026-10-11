@@ -488,6 +488,12 @@ h2{font-weight:600;letter-spacing:.01em;text-transform:uppercase;line-height:1.0
 .shock{width:44px;height:44px;margin:-22px 0 0 -22px;border:2px solid var(--a);border-radius:50%}
 .is-popped>*,.step.is-popped::before{opacity:.08!important;transition:opacity .2s}
 .step>*,.card>*{transition:opacity .25s}
+
+/* popup shows the box content only */
+.pop{padding:1rem 1.25rem 1.1rem}
+.pop p{color:var(--fg);font-size:1.05rem;line-height:1.65}
+.is-popped>*,.step.is-popped::before{opacity:1!important}
+.is-popped p{opacity:.06!important}
 </style>
 </head>
 <body>
@@ -586,11 +592,11 @@ h2{font-weight:600;letter-spacing:.01em;text-transform:uppercase;line-height:1.0
   <div class="eyebrow rv">Chapter IV · The Process</div>
   <h2 class="rv">The process I keep <span class="grad">running smoothly.</span></h2>
   <div class="flow">
-    <div class="step glass rv"><h3>Receiving</h3><p>Weighing, documentation and secure intake of gold and silver.</p></div>
-    <div class="step glass rv" style="transition-delay:.12s"><h3>Assay</h3><p>Fire assay and spectrometry confirm purity before any value is agreed.</p></div>
-    <div class="step glass rv" style="transition-delay:.24s"><h3>Smelting and refining</h3><p>Melting and refining up to 999.9 fineness.</p></div>
-    <div class="step glass rv" style="transition-delay:.36s"><h3>Casting and minting</h3><p>Cast bars, granules, minted bars and coins, including custom designs.</p></div>
-    <div class="step glass rv" style="transition-delay:.48s"><h3>Dispatch</h3><p>Reconciliation, logistics and delivery to clients.</p></div>
+    <div class="step glass rv"><h3>Receiving</h3><p>Every consignment of gold or silver is weighed, logged and documented the moment it arrives, then moved into secure storage. Clear paperwork at this first stage keeps each lot traceable from start to finish.</p></div>
+    <div class="step glass rv" style="transition-delay:.12s"><h3>Assay</h3><p>Samples from each lot are tested by fire assay and spectrometry. The results confirm purity and set the value before any pricing or processing begins.</p></div>
+    <div class="step glass rv" style="transition-delay:.24s"><h3>Smelting and refining</h3><p>Metal is melted and refined to the required fineness, up to 999.9 for bullion. Process checks and recorded yields keep the output accurate and consistent.</p></div>
+    <div class="step glass rv" style="transition-delay:.36s"><h3>Casting and minting</h3><p>Refined metal is cast into bars and granules, or minted into bars and coins, including custom designs. Every piece is weighed, marked and checked before it moves on.</p></div>
+    <div class="step glass rv" style="transition-delay:.48s"><h3>Dispatch</h3><p>Finished products are reconciled against the records, packed securely and released with complete documents. Logistics are coordinated so delivery to the client is on time and fully traceable.</p></div>
   </div>
   
 </section>
@@ -599,10 +605,10 @@ h2{font-weight:600;letter-spacing:.01em;text-transform:uppercase;line-height:1.0
   <div class="eyebrow rv">Chapter V · Skills</div>
   <h2 class="rv">What I bring to <span class="grad">the operation.</span></h2>
   <div class="cards">
-    <div class="card glass rv tilt"><div class="ico">⚙</div><h3>Operations</h3><p>Production planning, shift coordination, throughput and stock control.</p></div>
-    <div class="card glass rv tilt" style="transition-delay:.1s"><div class="ico">₿</div><h3>Accounts and audit</h3><p>Neo Gold accounting, reconciliation and audit support.</p></div>
-    <div class="card glass rv tilt" style="transition-delay:.2s"><div class="ico">★</div><h3>Leadership</h3><p>Managing teams across supply chain, logistics and trading.</p></div>
-    <div class="card glass rv tilt" style="transition-delay:.3s"><div class="ico">◈</div><h3>Trading platforms</h3><p>Platform handling on StoneX, Gold Standard, Vintage and Lunaro, with spot fixing, LBMA price fixing, hedging and risk control.</p></div>
+    <div class="card glass rv tilt"><div class="ico">⚙</div><h3>Operations</h3><p>Plans daily production and shifts, keeps refinery throughput steady and controls stock movement, so work flows from intake to dispatch without delays or gaps.</p></div>
+    <div class="card glass rv tilt" style="transition-delay:.1s"><div class="ico">₿</div><h3>Accounts and audit</h3><p>Uses Neo Gold accounting for transactions and reconciliation, and supports audits with accurate, complete records for every lot.</p></div>
+    <div class="card glass rv tilt" style="transition-delay:.2s"><div class="ico">★</div><h3>Leadership</h3><p>Guides teams across supply chain, logistics, trading and production, setting clear priorities and keeping everyone working to the same standards.</p></div>
+    <div class="card glass rv tilt" style="transition-delay:.3s"><div class="ico">◈</div><h3>Trading platforms</h3><p>Handles StoneX, Gold Standard, Vintage and Lunaro for spot fixing and LBMA price fixing, and manages hedging and risk control against price movements.</p></div>
   </div>
   <div class="chips rv">
     <span class="chip">Auditing</span><span class="chip">Neo Gold Accounting</span><span class="chip">Office Operations</span><span class="chip">Process Optimization</span><span class="chip">Team Leadership</span><span class="chip">Supply Chain</span><span class="chip">Logistics</span><span class="chip">Cross-functional Teams</span><span class="chip">Precious Metals Trading</span><span class="chip">Gold Refinery Operations</span>
@@ -850,8 +856,7 @@ function hide(instant){const p=popEl,b=cur;popEl=null;cur=null;if(b)b.classList.
  if(instant){p.remove();return}animate(p,{opacity:0,scale:.7},{duration:.16}).then(()=>p.remove())}
 function show(box){if(cur===box)return;hide(true);cur=box;sy0=scrollY;
  const r=box.getBoundingClientRect(),c=info(box),p=document.createElement('div');p.className='pop';
- p.innerHTML='<div class="pk"><span class="bdg"></span><h4></h4></div><p></p>';
- p.querySelector('.bdg').textContent=c.badge;p.querySelector('h4').textContent=c.t;p.querySelector('p').textContent=c.x;
+ p.innerHTML='<p></p>';p.querySelector('p').textContent=c.x;
  p.style.visibility='hidden';document.body.appendChild(p);
  const w=p.offsetWidth,h=p.offsetHeight,cx=r.left+r.width/2;
  let left=Math.max(12,Math.min(innerWidth-w-12,cx-w/2)),top=r.top-h-18,pos='above';
