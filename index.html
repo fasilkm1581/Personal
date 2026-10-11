@@ -14,8 +14,8 @@
 
 
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--fg);font-family:var(--sans);line-height:1.65;overflow-x:hidden;padding-inline:max(16px,4vw)}
+html{scroll-behavior:smooth;overflow-x:clip}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);line-height:1.65;overflow-x:clip;padding-inline:max(16px,4vw)}
 a{color:inherit;text-decoration:none}
 :focus-visible{outline:2px solid var(--a);outline-offset:3px}
 /* blobs */
@@ -400,8 +400,8 @@ h2{font-weight:600;letter-spacing:.01em;text-transform:uppercase;line-height:1.0
 .avatar::before{box-shadow:0 0 50px rgba(232,179,107,.35),0 0 100px rgba(43,140,147,.25)}
 .hero-bars{animation:kb 24s ease-in-out infinite alternate}
 @keyframes kb{from{transform:scale(1)}to{transform:scale(1.12)}}
-.grain{position:fixed;inset:-50%;width:200%;height:200%;z-index:80;pointer-events:none;opacity:.075;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");animation:grain .9s steps(6) infinite}
-@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-4%,3%)}40%{transform:translate(3%,-5%)}60%{transform:translate(-6%,-2%)}80%{transform:translate(5%,4%)}100%{transform:translate(0,0)}}
+.grain{position:fixed;inset:0;width:100%;height:100%;z-index:80;pointer-events:none;opacity:.075;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");animation:grain .9s steps(6) infinite}
+@keyframes grain{0%{background-position:0 0}20%{background-position:-40px 30px}40%{background-position:30px -50px}60%{background-position:-60px -20px}80%{background-position:50px 40px}100%{background-position:0 0}}
 .vig{position:fixed;inset:0;z-index:79;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 45%,rgba(0,0,0,.62) 100%)}
 .grade{position:fixed;inset:0;z-index:78;pointer-events:none;mix-blend-mode:soft-light;background:linear-gradient(135deg,rgba(43,140,147,.45),rgba(232,179,107,.32))}
 .lb{position:fixed;left:0;right:0;height:7vh;background:#000;z-index:44;pointer-events:none}
